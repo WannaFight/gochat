@@ -83,7 +83,7 @@ func (m UserModel) Insert(user *User) error {
 func (m *UserModel) GetByUsername(username string) (*User, error) {
 	user := new(User)
 	query := `
-		SELECT id, username, created_at
+		SELECT id, username, created_at, password_hash
 		FROM users
 		WHERE username = $1`
 
@@ -94,6 +94,7 @@ func (m *UserModel) GetByUsername(username string) (*User, error) {
 		&user.ID,
 		&user.Username,
 		&user.CreatedAt,
+		&user.Password.hash,
 	)
 	if err != nil {
 		switch {

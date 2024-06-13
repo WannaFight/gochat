@@ -14,5 +14,7 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("POST /api/v1/users", app.createUserHandler)
 	mux.HandleFunc("GET /api/v1/users/{uuid}", app.getUserHandler)
 
+	mux.HandleFunc("POST /api/v1/tokens/auth", app.createAuthenticationTokenHandler)
+
 	return mux
 }

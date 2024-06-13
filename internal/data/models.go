@@ -13,6 +13,7 @@ type Models struct {
 	Users       UserModel
 	Chats       ChatModel
 	ChatMembers ChatMemberModel
+	Tokens      TokenModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -20,5 +21,6 @@ func NewModels(db *sql.DB) Models {
 		Users:       UserModel{DB: db},
 		Chats:       ChatModel{DB: db},
 		ChatMembers: ChatMemberModel{DB: db},
+		Tokens:      TokenModel{DB: db},
 	}
 }
