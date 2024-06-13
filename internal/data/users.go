@@ -9,6 +9,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	ErrDuplicateUsername = errors.New("duplicate username")
+)
+
 type User struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -67,8 +71,7 @@ func (m UserModel) Insert(user *User) error {
 	if err != nil {
 		switch {
 		case err.Error() == `pq: duplicate key value violates unique constraint "users_username_key"`:
-			// TODO: create specific error
-			return errors.New("duplicate username")
+			return ErrDuplicateUsername
 		default:
 			return err
 		}
@@ -95,8 +98,7 @@ func (m *UserModel) GetByUsername(username string) (*User, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			// TODO: creae specific error
-			return nil, errors.New("not found")
+			return nil, ErrRecordNotFound
 		default:
 			return nil, err
 		}
