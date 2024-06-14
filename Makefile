@@ -30,3 +30,9 @@ db/migrate/up:
 db/migrate/force: guard-version
 	@echo "Forcing to migrate to version=${version}"
 	@migrate -path ./migrations -database ${DB_DSN} force ${version}
+
+## db/migrations/goto: go to migration version
+.PHONY: db/migrate/goto
+db/migrate/goto: guard-version
+	@echo "Migrate to version=${version}"
+	@migrate -path ./migrations -database ${DB_DSN} goto ${version}

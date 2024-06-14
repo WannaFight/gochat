@@ -10,9 +10,9 @@ import (
 )
 
 type Chat struct {
-	UUID        uuid.UUID    `json:"uuid"`
-	CreatedAt   time.Time    `json:"created_at"`
-	ChatMembers []ChatMember `json:"chat_members"`
+	UUID      uuid.UUID `json:"uuid"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type ChatMember struct {
