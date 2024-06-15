@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/WannaFight/gochat/internal/data"
 )
 
 func (app *application) getChatMessages(w http.ResponseWriter, r *http.Request) {
@@ -12,7 +15,28 @@ func (app *application) getChatMessages(w http.ResponseWriter, r *http.Request) 
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	fmt.Fprintf(w, "listing all chat messages of chat with uuid=%s\n", uuid.String())
+
+	chat, err := app.models.Chats.GetByUUID(uuid)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	messages, err := app.models.ChatMessages.GetAllByChat(chat.UUID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"messages": messages}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request) {
@@ -22,5 +46,50 @@ func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	fmt.Fprintf(w, "add chat member to chat with uuid=%s\n", uuid.String())
+	user := app.contextGetUser(r)
+	chat, err := app.models.Chats.GetByUUID(uuid)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	member, err := app.models.ChatMembers.GetByIDAndChat(user.ID, chat.UUID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	var input struct {
+		Text string `json:"text"`
+	}
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+	message := &data.ChatMessage{
+		Text:   input.Text,
+		Author: *member,
+	}
+
+	err = app.models.ChatMessages.Insert(message)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"message": message}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
