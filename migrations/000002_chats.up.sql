@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS chat_members (
     id bigserial PRIMARY KEY,
     chat_uuid uuid REFERENCES chats(uuid),
     user_id bigserial REFERENCES users(id),
+    created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     is_owner boolean DEFAULT FALSE
 );
 

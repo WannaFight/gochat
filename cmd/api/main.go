@@ -44,14 +44,18 @@ func main() {
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
 	flag.StringVar(&cfg.db.maxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connection idle time")
-
 	cfg.version = version
-	// lvl := new(slog.LevelVar)
-	// lvl.Set(slog.LevelDebug)
-	// logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-	// 	Level: lvl,
-	// }))
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	lvl := new(slog.LevelVar)
+	if cfg.env == "dev" {
+		lvl.Set(slog.LevelDebug)
+	} else {
+		lvl.Set(slog.LevelInfo)
+	}
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: lvl,
+	}))
 
 	db, err := openDB(cfg)
 	if err != nil {
