@@ -1,9 +1,15 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/WannaFight/gochat/cmd/web"
+	"github.com/a-h/templ"
+)
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
+	fileServer := http.FileServer(http.FS(web.Files))
 
 	mux.HandleFunc("GET /api/v1/healthcheck", app.healthcheckHandler)
 
@@ -19,6 +25,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /api/v1/users/{uuid}", app.requireAuthenticatedUser(app.getUserHandler))
 
 	mux.HandleFunc("POST /api/v1/tokens/auth", app.createAuthenticationTokenHandler)
+
+	mux.Handle("/login", templ.Handler(web.LoginForm()))
+	mux.Handle("/register", templ.Handler(web.RegisterForm()))
+	mux.Handle("/assets/", fileServer)
 
 	return app.authenticate(mux)
 }
