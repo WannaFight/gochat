@@ -1,0 +1,33 @@
+package components
+
+templ UserForm(postURL string) {
+	<div class="columns is-centered is-family-monospace">
+		<div class="column is-half is-5">
+			<form hx-post={ postURL } hx-ext="json-enc">
+				<section class="section">
+					<div class="field">
+						<label class="label">Username</label>
+						<div class="control">
+							<input class="input is-medium" type="text" name="username" required/>
+						</div>
+						<p class="help is-danger"></p>
+					</div>
+					<div class="field">
+						<label class="label">Password</label>
+						<div class="control">
+							<input class="input is-medium" type="password" minlength="8" maxlength="72" name="password" required/>
+						</div>
+						<p class="help is-danger"></p>
+					</div>
+					<br/>
+					<div class="has-text-centered">
+						<button type="submit" class="button is-primary is-outlined">Login</button>
+					</div>
+					<div class="has-text-centered">
+						<a href="register">Do not hasve account yet? Sign Up</a>
+					</div>
+				</section>
+			</form>
+		</div>
+	</div>
+}
