@@ -1,5 +1,0 @@
-DROP TABLE IF EXISTS chat_members CASCADE;
-
-DROP TABLE IF EXISTS chat_messages;
-
-DROP TABLE IF EXISTS chats;
