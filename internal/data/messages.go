@@ -9,10 +9,10 @@ import (
 )
 
 type ChatMessage struct {
-	ID     int64      `json:"id"`
-	Text   string     `json:"text"`
-	SentAt time.Time  `json:"sent_at"`
-	Author ChatMember `json:"author"`
+	ID     int64     `json:"id"`
+	Text   string    `json:"text"`
+	SentAt time.Time `json:"sent_at"`
+	Author User      `json:"author"`
 }
 
 type ChatMessageModel struct {
@@ -21,7 +21,7 @@ type ChatMessageModel struct {
 
 func (m ChatMessageModel) Insert(message *ChatMessage) error {
 	query := `
-		INSERT INTO chat_messages (text, chat_member_id)
+		INSERT INTO chat_messages (text, user_id)
 		VALUES ($1, $2)
 		RETURNING id, sent_at`
 
@@ -38,8 +38,8 @@ func (m ChatMessageModel) GetAllByChat(chatUUID uuid.UUID) ([]*ChatMessage, erro
 	query := `
 		SELECT msg.id, msg.text, msg.sent_at, mem.id, mem.is_owner, mem.user_id
 		FROM chat_messages AS msg
-		JOIN chat_members AS mem ON msg.chat_member_id = mem.id
-		WHERE mem.chat_uuid = $1`
+		JOIN users AS u ON u.id = msg.user_id
+		WHERE msg.chat_id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -58,8 +58,7 @@ func (m ChatMessageModel) GetAllByChat(chatUUID uuid.UUID) ([]*ChatMessage, erro
 			&message.Text,
 			&message.SentAt,
 			&message.Author.ID,
-			&message.Author.IsOwner,
-			&message.Author.UserID,
+			&message.Author.Username,
 		)
 		if err != nil {
 			return nil, err

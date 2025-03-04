@@ -58,7 +58,7 @@ func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	member, err := app.models.ChatMembers.GetByIDAndChat(user.ID, chat.UUID)
+	_, err = app.models.ChatMembers.GetByIDAndChat(user.ID, chat.UUID)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -79,7 +79,7 @@ func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request
 
 	message := &data.ChatMessage{
 		Text:   input.Text,
-		Author: *member,
+		Author: *user,
 	}
 
 	err = app.models.ChatMessages.Insert(message)
