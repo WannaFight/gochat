@@ -62,6 +62,7 @@ func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
+			// TODO: change "no permission"
 			app.notFoundResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)

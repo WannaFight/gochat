@@ -1,6 +1,8 @@
 module github.com/WannaFight/gochat
 
-go 1.22.1
+go 1.23
+
+toolchain go1.23.6
 
 require (
 	github.com/google/uuid v1.6.0
@@ -9,4 +11,4 @@ require (
 
 require github.com/lib/pq v1.10.9
 
-require github.com/a-h/templ v0.2.707
+require github.com/a-h/templ v0.3.833

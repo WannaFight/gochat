@@ -1,4 +1,4 @@
-exclude: 'vendor'
+exclude: 'vendor, *_templ.go'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
@@ -8,6 +8,6 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.57.2
+    rev: v1.64.6
     hooks:
       - id: golangci-lint-full
