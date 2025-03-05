@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -85,4 +86,11 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 	}
 
 	return nil
+}
+
+func (app *application) generateTokenCookie(token string) http.Header {
+	ttlSeconds := int((time.Hour * 24).Seconds())
+	headers := make(http.Header)
+	headers.Add("Set-Cookie", fmt.Sprintf("token=%s;Path=/;HttpOnly;Max-Age=%d", token, ttlSeconds))
+	return headers
 }

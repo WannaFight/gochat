@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/WannaFight/gochat/internal/data"
 )
@@ -38,7 +39,16 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"user": user}, nil)
+	token, err := app.models.Tokens.New(user.ID, 24*time.Hour, data.ScopeAuthentication)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := app.generateTokenCookie(token.PlainText)
+	headers.Add("HX-Redirect", "/chats")
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"user": user}, headers)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

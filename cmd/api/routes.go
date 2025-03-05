@@ -33,5 +33,5 @@ func (app *application) routes() http.Handler {
 
 	mux.Handle("/assets/", fileServer)
 
-	return app.authenticate(mux)
+	return app.AuthenticateWithCookie(mux)
 }

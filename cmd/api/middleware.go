@@ -8,7 +8,7 @@ import (
 	"github.com/WannaFight/gochat/internal/data"
 )
 
-func (app *application) authenticate(next http.Handler) http.Handler {
+func (app *application) AuthenticateWithToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Authorization")
 
@@ -30,6 +30,42 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 		token := headerParts[1]
 		if token == "" || len(token) > 26 {
 			app.logger.Debug("Authorization token is not valid", "token", authHeader)
+			app.invalidAuthenticationTokenResponse(w, r)
+			return
+		}
+
+		user, err := app.models.Users.GetByToken(token, data.ScopeAuthentication)
+		if err != nil {
+			switch {
+			case errors.Is(err, data.ErrRecordNotFound):
+				app.invalidAuthenticationTokenResponse(w, r)
+			default:
+				app.serverErrorResponse(w, r, err)
+			}
+			return
+		}
+
+		r = app.contextSetUser(r, user)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) AuthenticateWithCookie(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Vary", "Cookie")
+
+		tokenCookie, err := r.Cookie("token")
+		// If no token is provided, we can assume current user is anonymous.
+		if err != nil {
+			app.logger.Error("error while obtaining cookie", "err", err.Error())
+			r := app.contextSetUser(r, data.AnonymousUser)
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		token := tokenCookie.Value
+		if token == "" || len(token) > 26 {
+			app.logger.Debug("Authorization token is not valid", "token", token)
 			app.invalidAuthenticationTokenResponse(w, r)
 			return
 		}
