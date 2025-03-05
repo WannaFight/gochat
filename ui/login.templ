@@ -1,0 +1,13 @@
+package ui
+
+import "github.com/WannaFight/gochat/ui/components"
+
+templ LoginForm() {
+	@Base() {
+		@components.UserForm("/api/v1/tokens/auth", "Login") {
+			<div class="has-text-centered">
+				<a href="register">Do not have account yet? Sign Up</a>
+			</div>
+		}
+	}
+}

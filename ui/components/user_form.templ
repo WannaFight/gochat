@@ -1,6 +1,6 @@
 package components
 
-templ UserForm(postURL string) {
+templ UserForm(postURL, buttonName string) {
 	<div class="columns is-centered is-family-monospace">
 		<div class="column is-half is-5">
 			<form hx-post={ postURL } hx-ext="json-enc">
@@ -21,11 +21,9 @@ templ UserForm(postURL string) {
 					</div>
 					<br/>
 					<div class="has-text-centered">
-						<button type="submit" class="button is-primary is-outlined">Login</button>
+						<button type="submit" class="button is-primary is-outlined">{ buttonName }</button>
 					</div>
-					<div class="has-text-centered">
-						<a href="register">Do not hasve account yet? Sign Up</a>
-					</div>
+					{children...}
 				</section>
 			</form>
 		</div>

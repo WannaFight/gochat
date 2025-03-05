@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func UserForm(postURL string) templ.Component {
+func UserForm(postURL, buttonName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -36,13 +36,34 @@ func UserForm(postURL string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(postURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/web/components/user_form.templ`, Line: 6, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/user_form.templ`, Line: 6, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-ext=\"json-enc\"><section class=\"section\"><div class=\"field\"><label class=\"label\">Username</label><div class=\"control\"><input class=\"input is-medium\" type=\"text\" name=\"username\" required></div><p class=\"help is-danger\"></p></div><div class=\"field\"><label class=\"label\">Password</label><div class=\"control\"><input class=\"input is-medium\" type=\"password\" minlength=\"8\" maxlength=\"72\" name=\"password\" required></div><p class=\"help is-danger\"></p></div><br><div class=\"has-text-centered\"><button type=\"submit\" class=\"button is-primary is-outlined\">Login</button></div><div class=\"has-text-centered\"><a href=\"register\">Do not hasve account yet? Sign Up</a></div></section></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-ext=\"json-enc\"><section class=\"section\"><div class=\"field\"><label class=\"label\">Username</label><div class=\"control\"><input class=\"input is-medium\" type=\"text\" name=\"username\" required></div><p class=\"help is-danger\"></p></div><div class=\"field\"><label class=\"label\">Password</label><div class=\"control\"><input class=\"input is-medium\" type=\"password\" minlength=\"8\" maxlength=\"72\" name=\"password\" required></div><p class=\"help is-danger\"></p></div><br><div class=\"has-text-centered\"><button type=\"submit\" class=\"button is-primary is-outlined\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(buttonName)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/user_form.templ`, Line: 24, Col: 78}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</button></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

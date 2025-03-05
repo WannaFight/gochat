@@ -3,13 +3,13 @@ package main
 import (
 	"net/http"
 
-	"github.com/WannaFight/gochat/cmd/web"
+	"github.com/WannaFight/gochat/ui"
 	"github.com/a-h/templ"
 )
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
-	fileServer := http.FileServer(http.FS(web.Files))
+	fileServer := http.FileServer(http.FS(ui.Files))
 
 	mux.HandleFunc("GET /api/v1/healthcheck", app.healthcheckHandler)
 
@@ -26,8 +26,11 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("POST /api/v1/tokens/auth", app.createAuthenticationTokenHandler)
 
-	mux.Handle("/login", templ.Handler(web.LoginForm()))
-	mux.Handle("/register", templ.Handler(web.RegisterForm()))
+	mux.Handle("/login", templ.Handler(ui.LoginForm()))
+	mux.Handle("/register", templ.Handler(ui.RegisterForm()))
+
+	mux.Handle("/chats", templ.Handler(ui.ChatList()))
+
 	mux.Handle("/assets/", fileServer)
 
 	return app.authenticate(mux)
