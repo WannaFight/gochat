@@ -23,7 +23,7 @@ type ChatMemberModel struct {
 
 func (m ChatMemberModel) Insert(chatMember *ChatMember) error {
 	query := `
-		INSERT INTO chat_members (chat_uuid, user_id, is_owner)
+		INSERT INTO chat_members (chat_id, user_id, is_owner)
 		VALUES ($1, $2, $3)
 		RETURNING id, created_at`
 	args := []any{chatMember.Chat.UUID, chatMember.UserID, chatMember.IsOwner}
@@ -48,7 +48,7 @@ func (m ChatMemberModel) GetByIDAndChat(userID int64, chatUUID uuid.UUID) (*Chat
 	query := `
 		SELECT id, user_id, is_owner
 		FROM chat_members
-		WHERE user_id = $1 AND chat_uuid = $2`
+		WHERE user_id = $1 AND chat_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -74,7 +74,7 @@ func (m ChatMemberModel) GetAllByChat(chatUUID uuid.UUID) ([]*ChatMember, error)
 	query := `
 		SELECT id, user_id, is_owner
 		FROM chat_members
-		WHERE chat_uuid = $1`
+		WHERE chat_id = $1`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 

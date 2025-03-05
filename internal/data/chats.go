@@ -36,9 +36,9 @@ func (m ChatModel) Insert(chat *Chat) error {
 
 func (m ChatModel) GetAllByUser(userID int64) ([]*Chat, error) {
 	query := `
-		SELECT chats.uuid, chats.name, chats.created_at
+		SELECT chats.id, chats.name, chats.created_at
 		FROM chats
-		JOIN chat_members ON chats.uuid = chat_members.chat_uuid
+		JOIN chat_members ON chats.id = chat_members.chat_id
 		WHERE chat_members.user_id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
