@@ -7,6 +7,8 @@ import (
 	"database/sql"
 	"encoding/base32"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -16,12 +18,12 @@ const (
 type Token struct {
 	PlainText string    `json:"token"`
 	Hash      []byte    `json:"-"`
-	UserID    int64     `json:"-"`
+	UserID    uuid.UUID `json:"-"`
 	Expiry    time.Time `json:"expiry"`
 	Scope     string    `json:"-"`
 }
 
-func generateToken(userID int64, ttl time.Duration, scope string) (*Token, error) {
+func generateToken(userID uuid.UUID, ttl time.Duration, scope string) (*Token, error) {
 	token := &Token{
 		UserID: userID,
 		Scope:  scope,
@@ -51,7 +53,7 @@ type TokenModel struct {
 	DB *sql.DB
 }
 
-func (m TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, error) {
+func (m TokenModel) New(userID uuid.UUID, ttl time.Duration, scope string) (*Token, error) {
 	token, err := generateToken(userID, ttl, scope)
 	if err != nil {
 		return nil, err
@@ -73,7 +75,7 @@ func (m TokenModel) Insert(token *Token) error {
 	return err
 }
 
-func (m TokenModel) DeleteForUser(userID int64, scope string) error {
+func (m TokenModel) DeleteForUser(userID uuid.UUID, scope string) error {
 	query := `
 		DELETE FROM tokens
 		WHERE user_id = $1 AND scope = $2`

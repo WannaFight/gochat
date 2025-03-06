@@ -1,33 +1,13 @@
 package main
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/WannaFight/gochat/internal/data"
 )
 
-func (app *application) getChatMessages(w http.ResponseWriter, r *http.Request) {
-	uuid, err := app.readUUIDParam(r)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-
-	chat, err := app.models.Chats.GetByUUID(uuid)
-	if err != nil {
-		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
-			app.notFoundResponse(w, r)
-		default:
-			app.serverErrorResponse(w, r, err)
-		}
-		return
-	}
-
-	messages, err := app.models.ChatMessages.GetAllByChat(chat.UUID)
+func (app *application) getMessages(w http.ResponseWriter, r *http.Request) {
+	messages, err := app.models.Messages.GetAll()
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -39,52 +19,22 @@ func (app *application) getChatMessages(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (app *application) createChatMessage(w http.ResponseWriter, r *http.Request) {
-	uuid, err := app.readUUIDParam(r)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	user := app.contextGetUser(r)
-	chat, err := app.models.Chats.GetByUUID(uuid)
-	if err != nil {
-		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
-			app.notFoundResponse(w, r)
-		default:
-			app.serverErrorResponse(w, r, err)
-		}
-		return
-	}
-
-	_, err = app.models.ChatMembers.GetByIDAndChat(user.ID, chat.UUID)
-	if err != nil {
-		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
-			// TODO: change "no permission"
-			app.notFoundResponse(w, r)
-		default:
-			app.serverErrorResponse(w, r, err)
-		}
-		return
-	}
-
+func (app *application) createMessage(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Text string `json:"text"`
 	}
-	err = app.readJSON(w, r, &input)
+
+	err := app.readJSON(w, r, &input)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
 
-	message := &data.ChatMessage{
+	message := &data.Message{
 		Text:   input.Text,
-		Author: *user,
+		Author: *app.contextGetUser(r),
 	}
 
-	err = app.models.ChatMessages.Insert(message)
-	if err != nil {
+	if err = app.models.Messages.Insert(message); err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}

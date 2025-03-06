@@ -55,7 +55,7 @@ func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, 
 	}
 
 	headers := app.generateTokenCookie(token.PlainText)
-	headers.Add("HX-Redirect", "/chats")
+	headers.Add("HX-Redirect", "/messages")
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"token": token}, headers)
 	if err != nil {

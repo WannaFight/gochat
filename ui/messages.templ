@@ -1,11 +1,11 @@
 package ui
 
-templ ChatList() {
+templ MessageList() {
     @Base() {
         <div class="columns is-centered is-family-monospace">
             <div class="column is-half is-5">
-            <div class="has-text-centered">Chat list</div>
-            <div hx-get="/api/v1/chats" hx-trigger="load"></div>
+            <div class="has-text-centered">Messages</div>
+            <div hx-get="/api/v1/messages" hx-trigger="load"></div>
             </div>
         </div>
     }

@@ -10,19 +10,15 @@ var (
 )
 
 type Models struct {
-	Users        UserModel
-	Chats        ChatModel
-	ChatMembers  ChatMemberModel
-	ChatMessages ChatMessageModel
-	Tokens       TokenModel
+	Users    UserModel
+	Messages MessageModel
+	Tokens   TokenModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
-		Users:        UserModel{DB: db},
-		Chats:        ChatModel{DB: db},
-		ChatMembers:  ChatMemberModel{DB: db},
-		ChatMessages: ChatMessageModel{DB: db},
-		Tokens:       TokenModel{DB: db},
+		Users:    UserModel{DB: db},
+		Messages: MessageModel{DB: db},
+		Tokens:   TokenModel{DB: db},
 	}
 }

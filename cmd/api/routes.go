@@ -13,13 +13,8 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("GET /api/v1/healthcheck", app.healthcheckHandler)
 
-	mux.HandleFunc("GET /api/v1/chats", app.requireAuthenticatedUser(app.listChatHandler))
-	mux.HandleFunc("POST /api/v1/chats", app.requireAuthenticatedUser(app.createChatHandler))
-	mux.HandleFunc("GET /api/v1/chats/{uuid}", app.requireAuthenticatedUser(app.getChatHandler))
-	mux.HandleFunc("GET /api/v1/chats/{uuid}/members", app.requireAuthenticatedUser(app.getChatMembers))
-	mux.HandleFunc("POST /api/v1/chats/{uuid}/members", app.requireAuthenticatedUser(app.createChatMember))
-	mux.HandleFunc("GET /api/v1/chats/{uuid}/messages", app.requireAuthenticatedUser(app.getChatMessages))
-	mux.HandleFunc("POST /api/v1/chats/{uuid}/messages", app.requireAuthenticatedUser(app.createChatMessage))
+	mux.HandleFunc("GET /api/v1/messages", app.requireAuthenticatedUser(app.getMessages))
+	mux.HandleFunc("POST /api/v1/messages", app.requireAuthenticatedUser(app.createMessage))
 
 	mux.HandleFunc("POST /api/v1/users", app.createUserHandler)
 	mux.HandleFunc("GET /api/v1/users/{uuid}", app.requireAuthenticatedUser(app.getUserHandler))
@@ -29,7 +24,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("/login", templ.Handler(ui.LoginForm()))
 	mux.Handle("/register", templ.Handler(ui.RegisterForm()))
 
-	mux.Handle("/chats", templ.Handler(ui.ChatList()))
+	mux.Handle("/messages", templ.Handler(ui.MessageList()))
 
 	mux.Handle("/assets/", fileServer)
 
